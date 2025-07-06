@@ -7,7 +7,6 @@ CREATE TABLE public.users (
     id UUID NOT NULL PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     first_name TEXT NOT NULL,
     last_name TEXT,
-    username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,
     avatar_url TEXT,

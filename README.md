@@ -81,8 +81,12 @@ Refer to the [Hasura CLI documentation](https://hasura.io/docs/latest/hasura-cli
 
 ## API Documentation
 
-Console URL: _TBD_
+Console URL:
+   - **Development**: https://stackfolio-hasura-dev-26461205929.australia-southeast1.run.app
+   - **Production**: https://stackfolio-hasura-prod-26461205929.australia-southeast1.run.app
 
-GraphQL Endpoint: _TBD_
+GraphQL Endpoint: 
+   - **Development**: https://stackfolio-hasura-dev-26461205929.australia-southeast1.run.app/v1/graphql
+   - **Production**: https://stackfolio-hasura-prod-26461205929.australia-southeast1.run.app/v1/graphql
 
 Admin Secret: **Contact the team lead for the actual value of the admin secret.**

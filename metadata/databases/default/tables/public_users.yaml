@@ -50,7 +50,6 @@ insert_permissions:
         - last_name
         - phone
         - role
-        - username
         - created_at
         - updated_at
         - moderator_id
@@ -69,7 +68,6 @@ select_permissions:
         - last_name
         - phone
         - role
-        - username
         - created_at
         - updated_at
         - moderator_id
@@ -92,7 +90,6 @@ select_permissions:
         - last_name
         - phone
         - role
-        - username
         - created_at
         - updated_at
         - moderator_id
@@ -116,7 +113,6 @@ update_permissions:
         - last_name
         - phone
         - role
-        - username
         - created_at
         - updated_at
         - moderator_id
@@ -141,7 +137,6 @@ update_permissions:
         - last_name
         - phone
         - role
-        - username
         - created_at
         - updated_at
         - moderator_id
