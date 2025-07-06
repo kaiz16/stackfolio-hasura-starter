@@ -7,7 +7,10 @@ env:
   SERVICE: stackfolio-hasura-prod
   REGION: australia-southeast1 # Change this to your preferred region
   PORT: 8080 # Cloud Run port
-  REPOSITORY: stackfolio # The repository name in Artifact Registry
+  # The name of the Artifact Registry repository where the Docker image will be stored.
+  # Make sure to create this repository in Artifact Registry before running the workflow.
+  # Link: https://console.cloud.google.com/artifacts/create-repo
+  REPOSITORY: stackfolio
   HASURA_VERSION: v2.48.0 # Specify the Hasura GraphQL Engine version
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
