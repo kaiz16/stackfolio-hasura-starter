@@ -1,6 +1,6 @@
 version: 3
-endpoint: http://localhost:8001
-admin_secret: a1340d6e-8637-49ab-96f5-e719d9f1849f
+endpoint: http://localhost:8000
+admin_secret: admin-secret
 metadata_directory: metadata
 actions:
   kind: synchronous
