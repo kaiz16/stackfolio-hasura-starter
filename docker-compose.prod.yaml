@@ -1,0 +1,14 @@
+version: '3.6'
+services:
+  stackfolio-hasura-prod:
+    container_name: 'stackfolio-hasura-prod'
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: stackfolio-hasura-prod
+    ports:
+      - '8001'
+    network_mode: host
+    restart: always # if fail (REASON - OOM or etc) restart always
+    env_file:
+      - .env.production

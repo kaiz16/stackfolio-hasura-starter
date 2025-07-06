@@ -1,0 +1,70 @@
+on:
+  push:
+    branches: [development]
+
+name: Stackfolio Hasura Starter - Development
+env:
+  SERVICE: stackfolio-hasura-dev
+  REGION: australia-southeast1 # Change this to your preferred region
+  PORT: 8080 # Cloud Run port
+  REPOSITORY: stackfolio # The repository name in Artifact Registry
+  HASURA_VERSION: v2.48.0 # Specify the Hasura GraphQL Engine version
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  GCP_SA_EMAIL: ${{ secrets.GCP_SA_EMAIL }}
+  HASURA_GRAPHQL_DATABASE_URL: ${{ secrets.ENV_HASURA_GRAPHQL_DATABASE_URL_DEV }} # The database URL for Hasura
+  HASURA_GRAPHQL_ENABLE_CONSOLE: true # Set to "false" to disable console. It is recommended to disable this in production
+  HASURA_GRAPHQL_DEV_MODE: true # Enable debug mode. It is recommended to disable this in production
+  HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+  HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.ENV_HASURA_GRAPHQL_ADMIN_SECRET_DEV }} # Admin secret for Hasura console, set to a strong random value. This key gives full admin access to the Hasura console, so keep it strong and secure.
+  HASURA_GRAPHQL_CORS_DOMAIN: '*' # CORS domain for the Hasura console. Set to '*' for development or specific domains in production.
+  HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: naming_convention
+  HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: graphql-default
+  HASURA_GRAPHQL_JWT_SECRET: '${{ secrets.ENV_HASURA_GRAPHQL_JWT_SECRET_DEV }}' # JWT secret in HS256 format eg: {"type":"HS256", "key": "your-secret-key"}
+  HASURA_GRAPHQL_UNAUTHORIZED_ROLE: anonymous # The role to use when no JWT is provided, typically 'anonymous' for public access
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authorize Docker push to Artifact Registry
+        run: gcloud auth configure-docker asia-docker.pkg.dev
+
+      - name: Pull and Push to Artifact Registry
+        run: |-
+          docker pull hasura/graphql-engine:${{ env.HASURA_VERSION }}
+          docker tag hasura/graphql-engine:${{ env.HASURA_VERSION }} asia-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{  github.sha }}
+          docker push asia-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{  github.sha }}
+
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy ${{ env.SERVICE }} \
+          --image asia-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{  github.sha }} \
+          --port ${{env.PORT}} \
+          --region ${{ env.REGION }} \
+          --memory 512Mi \
+          --min-instances 0 \
+          --quiet \
+          --platform "managed" \
+          --service-account ${{ env.GCP_SA_EMAIL }} \
+          --allow-unauthenticated \
+          --set-env-vars "HASURA_GRAPHQL_DATABASE_URL=${{ env.HASURA_GRAPHQL_DATABASE_URL }}" \
+          --set-env-vars "HASURA_GRAPHQL_ENABLE_CONSOLE=${{ env.HASURA_GRAPHQL_ENABLE_CONSOLE }}" \
+          --set-env-vars "HASURA_GRAPHQL_DEV_MODE=${{ env.HASURA_GRAPHQL_DEV_MODE }}" \
+          --set-env-vars "^@^HASURA_GRAPHQL_ENABLED_LOG_TYPES=${{ env.HASURA_GRAPHQL_ENABLED_LOG_TYPES }}" \
+          --set-env-vars "HASURA_GRAPHQL_ADMIN_SECRET=${{ env.HASURA_GRAPHQL_ADMIN_SECRET }}" \
+          --set-env-vars "HASURA_GRAPHQL_CORS_DOMAIN=${{ env.HASURA_GRAPHQL_CORS_DOMAIN }}" \
+          --set-env-vars "HASURA_GRAPHQL_EXPERIMENTAL_FEATURES=${{ env.HASURA_GRAPHQL_EXPERIMENTAL_FEATURES }}" \
+          --set-env-vars "HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION=${{ env.HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION }}" \
+          --set-env-vars '^@^HASURA_GRAPHQL_JWT_SECRET=${{ env.HASURA_GRAPHQL_JWT_SECRET }}' \
+          --set-env-vars "HASURA_GRAPHQL_UNAUTHORIZED_ROLE=${{ env.HASURA_GRAPHQL_UNAUTHORIZED_ROLE }}" \
+          --set-env-vars "HASURA_GRAPHQL_SERVER_PORT=${{ env.PORT }}"

@@ -1,0 +1,14 @@
+version: '3.6'
+services:
+  stackfolio-hasura-dev:
+    container_name: 'stackfolio-hasura-dev'
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: stackfolio-hasura-dev
+    ports:
+      - '8000'
+    network_mode: host
+    restart: always # if fail (REASON - OOM or etc) restart always
+    env_file:
+      - .env.development

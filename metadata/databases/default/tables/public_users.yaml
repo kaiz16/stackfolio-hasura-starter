@@ -1,0 +1,158 @@
+table:
+  name: users
+  schema: public
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteUsers
+    delete_by_pk: deleteUser
+    insert: createUsers
+    insert_one: createUser
+    select: users
+    select_aggregate: usersAggregate
+    select_by_pk: user
+    update: updateUsers
+    update_by_pk: updateUser
+object_relationships:
+  - name: moderator
+    using:
+      foreign_key_constraint_on: moderator_id
+  - name: userRole
+    using:
+      foreign_key_constraint_on: role
+array_relationships:
+  - name: users
+    using:
+      foreign_key_constraint_on:
+        column: moderator_id
+        table:
+          name: users
+          schema: public
+computed_fields:
+  - name: fullName
+    definition:
+      function:
+        name: users_full_name
+        schema: public
+insert_permissions:
+  - role: moderator
+    permission:
+      check: {}
+      columns:
+        - is_deleted
+        - suspended
+        - last_name_changed_at
+        - avatar_url
+        - bio
+        - email
+        - first_name
+        - last_name
+        - phone
+        - role
+        - username
+        - created_at
+        - updated_at
+        - moderator_id
+        - id
+select_permissions:
+  - role: moderator
+    permission:
+      columns:
+        - is_deleted
+        - suspended
+        - last_name_changed_at
+        - avatar_url
+        - bio
+        - email
+        - first_name
+        - last_name
+        - phone
+        - role
+        - username
+        - created_at
+        - updated_at
+        - moderator_id
+        - id
+      computed_fields:
+        - fullName
+      filter: {}
+      limit: 1000
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+        - is_deleted
+        - suspended
+        - last_name_changed_at
+        - avatar_url
+        - bio
+        - email
+        - first_name
+        - last_name
+        - phone
+        - role
+        - username
+        - created_at
+        - updated_at
+        - moderator_id
+        - id
+      computed_fields:
+        - fullName
+      filter: {}
+      limit: 1000
+      allow_aggregations: true
+update_permissions:
+  - role: moderator
+    permission:
+      columns:
+        - is_deleted
+        - suspended
+        - last_name_changed_at
+        - avatar_url
+        - bio
+        - email
+        - first_name
+        - last_name
+        - phone
+        - role
+        - username
+        - created_at
+        - updated_at
+        - moderator_id
+        - id
+      filter:
+        _or:
+          - moderator_id:
+              _eq: X-Hasura-User-Id
+          - id:
+              _eq: X-Hasura-User-Id
+      check: null
+  - role: user
+    permission:
+      columns:
+        - is_deleted
+        - suspended
+        - last_name_changed_at
+        - avatar_url
+        - bio
+        - email
+        - first_name
+        - last_name
+        - phone
+        - role
+        - username
+        - created_at
+        - updated_at
+        - moderator_id
+        - id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check: null
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        id:
+          _eq: X-Hasura-User-Id

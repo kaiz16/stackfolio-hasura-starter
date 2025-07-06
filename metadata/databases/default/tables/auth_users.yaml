@@ -1,0 +1,16 @@
+table:
+  name: users
+  schema: auth
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteAuthUsers
+    delete_by_pk: deleteAuthUser
+    insert: createAuthUsers
+    insert_one: createAuthUser
+    select: authUsers
+    select_aggregate: authUsersAggregate
+    select_by_pk: authUser
+    update: updateAuthUsers
+    update_by_pk: updateAuthUser

@@ -1,0 +1,24 @@
+table:
+  name: user_roles
+  schema: types
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteTypesUserRoles
+    delete_by_pk: deleteTypesUserRole
+    insert: createTypesUserRoles
+    insert_one: createTypesUserRole
+    select: typesUserRoles
+    select_aggregate: typesUserRolesAggregate
+    select_by_pk: typesUserRole
+    update: updateTypesUserRoles
+    update_by_pk: updateTypesUserRole
+array_relationships:
+  - name: users
+    using:
+      foreign_key_constraint_on:
+        column: role
+        table:
+          name: users
+          schema: public

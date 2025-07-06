@@ -1,0 +1,20 @@
+{
+  "name": "stackfolio-hasura-starter",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "format": "prettier --write .",
+    "migrate": "NODE_ENV=development hasura migrate apply && hasura metadata apply",
+    "migrate:status": "NODE_ENV=development hasura migrate status",
+    "metadata:export": "NODE_ENV=development hasura metadata export"
+  },
+  "keywords": [],
+  "author": "kaiz16",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
